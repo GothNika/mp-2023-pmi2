@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include<locale.h>
+
+typedef struct {
+    char *Family;
+    char *Facultet;
+    int ID;
+} Tutor;
+
+Tutor *Tutors = NULL;
+int tutorCount = 0;
+
+int isFamily(const char *temp) {
+    if (strlen(temp) > 1) 
+    {
+        if (isupper(temp[0]) && islower(temp[1])) 
+            return 1;
+        else
+            return 0;
+    } else
+        return 0;
+}
+
+int isID(const char *temp) 
+{
+    for (int i = 0; i < strlen(temp); i++) 
+    {
+        if (!isdigit(temp[i]))
+            return 0;
+    }
+    return 1;
+}
+
+void addTutor(const char *family, const char *facultet, int id) {
+    Tutors = realloc(Tutors, (tutorCount + 1) * sizeof(Tutor));
+    Tutors[tutorCount].Family = strdup(family);
+    Tutors[tutorCount].Facultet = strdup(facultet);
+    Tutors[tutorCount].ID = id;
+    tutorCount++;
+}
+
+void printTutors() {
+    for (int i = 0; i < tutorCount; i++) {
+        printf("Факультет: %s  Фамилия преподавателя: %s ID: %d\n", Tutors[i].Facultet, Tutors[i].Family, Tutors[i].ID);
+    }
+}
+
+void printTutorsByFacultet(const char *facultet) {
+    for (int i = 0; i < tutorCount; i++) {
+        if (strcmp(Tutors[i].Facultet, facultet) == 0) {
+            printf("Фамилия преподавателя: %s ID: %d\n", Tutors[i].Family, Tutors[i].ID);
+        }
+    }
+}
+
+void printTutorsByFamily(const char *family) {
+    for (int i = 0; i < tutorCount; i++) {
+        if (strcmp(Tutors[i].Family, family) == 0) {
+            printf("Факультет: %s  Фамилия преподавателя: %s ID: %d\n", Tutors[i].Facultet, Tutors[i].Family, Tutors[i].ID);
+        }
+    }
+}
+
+int main() {
+    setlocale(LC_CTYPE,"Russian");
+    printf("Введите данные о преподавателях (Фамилия, факультет и ID)\n");
+    printf("Для окончания ввода данных нажмите Tab\n");
+    char tempStr[256];
+    while (fgets(tempStr, sizeof(tempStr), stdin) && tempStr[0] != '\t') {
+        char *ArrayStr[3];
+        int count = 0;
+        char *token = strtok(tempStr, " \n");
+        while (token != NULL && count < 3) {
+            ArrayStr[count] = token;
+            token = strtok(NULL, " \n");
+            count++;
+        }
+        if (count != 3) {
+            printf("Недостаточно данных в строке для записи. Введите данные еще раз.\n");
+        } else {
+            char *family = NULL;
+            char *facultet = NULL;
+            int id = 0;
+            for (int i = 0; i < count; i++) 
+            {
+                if (isID(ArrayStr[i]))
+                {
+                    id = atoi(ArrayStr[i]);
+                    printf("Итерация: %d id = %d\n", i, id);
+                }
+                else if (isFamily(ArrayStr[i]))
+                    {
+                        family = ArrayStr[i];
+                        printf("Итерация: %d Фамилия = %s\n", i, family);                    
+                        
+                    }
+                else
+                {
+                    facultet = ArrayStr[i];
+                    printf("Итерация: %d Факультет = %s\n", i, facultet);         
+                }
+            }
+            printf("Факультет: %s  Фамилия преподавателя: %s ID: %d\n", facultet, family, id);
+            addTutor(family, facultet, id);
+            printf("Введите следующего преподавателя\n");
+        }
+    }
+    printf("Для получения данных по запросу нажмите:\n");
+    printf("1. Получить всю введенную информацию о преподавателях - нажмите 1\n");
+    printf("2. Получить информацию о преподавателях на факультете - нажмите 2\n");
+    printf("3. Получить информацию о конкретном преподавателе - нажмите 3\n");
+    printf("Для выхода из приложения нажмите Tab\n");
+    while (fgets(tempStr, sizeof(tempStr), stdin) && tempStr[0] != '\t') {
+        switch (tempStr[0]) {
+            case '1':
+                printTutors();
+                break;
+            case '2':
+                printf("Введите название факультета\n");
+                fgets(tempStr, sizeof(tempStr), stdin);
+                tempStr[strcspn(tempStr, "\n")] = 0; // Remove newline
+                printTutorsByFacultet(tempStr);
+                break;
+            case '3':
+                printf("Введите фамилию преподавателя\n");
+                fgets(tempStr, sizeof(tempStr), stdin);
+                tempStr[strcspn(tempStr, "\n")] = 0; // Remove newline
+                printTutorsByFamily(tempStr);
+                break;
+        }
+    }
+
+    // Free allocated memory
+    for (int i = 0; i < tutorCount; i++) {
+        free(Tutors[i].Family);
+        free(Tutors[i].Facultet);
+    }
+    free(Tutors);
+
+    return 0;
+}
+
+
