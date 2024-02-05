@@ -89,21 +89,21 @@ int main() {
                 if (isID(ArrayStr[i]))
                 {
                     id = atoi(ArrayStr[i]);
-                    printf("Итерация: %d id = %d\n", i, id);
+                   // printf("Итерация: %d id = %d\n", i, id);
                 }
                 else if (isFamily(ArrayStr[i]))
                     {
                         family = ArrayStr[i];
-                        printf("Итерация: %d Фамилия = %s\n", i, family);                    
+                     //   printf("Итерация: %d Фамилия = %s\n", i, family);                    
                         
                     }
                 else
                 {
                     facultet = ArrayStr[i];
-                    printf("Итерация: %d Факультет = %s\n", i, facultet);         
+                  //  printf("Итерация: %d Факультет = %s\n", i, facultet);         
                 }
             }
-            printf("Факультет: %s  Фамилия преподавателя: %s ID: %d\n", facultet, family, id);
+           // printf("Факультет: %s  Фамилия преподавателя: %s ID: %d\n", facultet, family, id);
             addTutor(family, facultet, id);
             printf("Введите следующего преподавателя\n");
         }
